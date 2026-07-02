@@ -12,7 +12,6 @@ import sys
 
 dateTime = datetime.now()
 HOST, PORT = "0.0.0.0", 514
-use_webex_bot=0
 
 # here under syslog server functions
 class SyslogUDPHandler(socketserver.BaseRequestHandler):
@@ -25,49 +24,19 @@ class SyslogUDPHandler(socketserver.BaseRequestHandler):
         syslog=str(data) # put it into the syslog variable
         print(yellow(syslog))
         # ##################################################################################################
-        # SELECT Syslog messages to save into file
-        # #################################################################################################
-        if '%FTD' in syslog and 'SID' in syslog and 'PROTOCOL-DNS SPOOF query response with TTL of 1 min. and no authority' not in syslog and 'PROTOCOL-DNS TMG Firewall Client long host entry exploit attempt' not in syslog and 'MALWARE-CNC DNS Fast Flux attempt' not in syslog:
+        # MESSAGE FILTER HERE UNDER : SELECT Syslog messages to save into output files thanks to keyword searches
+        # ##################################################################################################
+        if '%FTD' in syslog:
+            print(cyan('CAPTURED MESSAGE :\n',bold=True))
+            print(cyan(syslog,bold=True))
             with open('./result/ftd_syslogs.txt','a+') as file:
                 file.write(syslog+'\n')
-        if 'CISE_Passed_Authentications' in syslog:
+        if 'CISE' in syslog:
+            print(cyan('CAPTURED MESSAGE :\n',bold=True))        
             print(cyan(syslog,bold=True))
-            with open('./result/CISE_Passed_Authentications.txt','a+') as file:
+            with open('./result/ise_syslogs.txt','a+') as file:
                 file.write(syslog+'\n')
-        if '<END>' in syslog:
-            with open('./bad_ip.txt') as file:
-                internal_ip=file.read()
-            print('\n===========================================\n\nAttacker IP addresses Detected by IPS : \n')
-            for ip in infected_machine_list:
-                if ip==internal_ip:
-                    print(red('- '+ip+' : This is an internal ip address ! this infected Endpoint will be Quarantined in ISE !!',bold=True))
-                    infected_ip_address=ip
-                else:    
-                    print('-',ip)
-            print('\n===========================================')
-            print(yellow('- Use pxGrid REST APIs and query Cisco ISE for quarantine for : '+ip,bold=True))
-            a= input('\nDo You want ISE to add this ip Address to the ANC Policy ? Y / N : ')
-            if a=='Y' or a=='y':  
-                if use_webex_bot:
-                    print(yellow('\n- You decided to send an alert to webex',bold=True))
-                    result=send_alert(infected_ip_address) # send an alert to webx for Endpoint Isolation Approval
-                    result = { 'status':'Alert To Webex Sent'}
-                else:
-                    print(yellow('\n- You decided to directly isolate endpoint in ISE',bold=True))
-                    result=quarantine_endpoint(infected_ip_address) # Query ISE pxgrid API to isolate endpoint
-                    result = { 'status':'ISE Isolation Requested'}
-            else:
-                result = { 'status':'Dont isolate'}
-            print("\nresult : ",yellow(result,bold=True))                 
-            if result['status']=='FAILURE':
-                print(red('- ERROR !',bold=True))
-            else:
-                print(green('- Ok Done - Now Check ISE ANC Policy Endpoint Assign',bold=True))
-        if '<BAD IP ADDRESS>' in syslog:
-            # we store the internal bad ip address into a file for the demo instead of querying ISE for hosts in sessions
-            bad_ip_address=syslog.split(': ')[1]
-            with open('./bad_ip.txt','w') as file:
-                file.write(bad_ip_address)
+
                 
 if __name__=="__main__":
     print()
@@ -75,9 +44,6 @@ if __name__=="__main__":
     with open("./debug/log.txt","w") as file:
         pass
     loguer(env.level+" SYLOG SERVER STARTS")
-    # set a default infected ip address
-    with open('./bad_ip.txt','w') as file:
-        file.write('0.0.0.0')    
     try:
         print('\n Let\'s start Syslog Server - listening on UDP 514')
         print(green(' All Good - listening on UDP 514 waiting for syslog messages',bold=True))

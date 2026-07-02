@@ -1,5 +1,5 @@
 '''
-    modification : 20260315
+    modification : 20260702
     
     description : initialize the application, create empty files  clean folder, reset folders
 '''
@@ -23,6 +23,8 @@ def init_appli():
     with open('b.bat','w') as file:
         file.write('python syslog_server_for_lab.py') 
     with open('c.bat','w') as file:
+        file.write('venv\\scripts\\activate') 
+    with open('d.bat','w') as file:
         file.write('python test_syslog_message_generator.py') 
         
 if __name__=="__main__":

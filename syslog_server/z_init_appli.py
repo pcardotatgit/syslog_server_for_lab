@@ -5,24 +5,6 @@
 '''
 import glob
 import os
-#from crayons import *
-
-def create_structure():
-    # example to customize
-    os.mkdir("./debug")
-    os.mkdir("./result")
-    os.mkdir("./observables ")      
-    os.mkdir("./keys")     
-    with open("./keys/config.txt",'w') as file:
-        outlines='''{
-profil_name=XDR Tenant name
-ctr_client_id=client-0932888d-xxxx
-ctr_client_password=RMllP4-xxx
-host=https://private.intel.eu.amp.cisco.com
-host_for_token=https://visibility.eu.amp.cisco.com
-}
-        '''
-        file.write(outlines)   
 
 
 def init_appli():
@@ -40,10 +22,8 @@ def init_appli():
         file.write('venv\\scripts\\activate')    
     with open('b.bat','w') as file:
         file.write('python syslog_server_for_lab.py') 
-    '''
-    with open('env.py','w') as file:
-        file.write('level="["')    
-    '''
+    with open('c.bat','w') as file:
+        file.write('python test_syslog_message_generator.py') 
         
 if __name__=="__main__":
     #create_structure()

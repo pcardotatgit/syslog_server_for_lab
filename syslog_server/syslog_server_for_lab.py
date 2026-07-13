@@ -27,15 +27,20 @@ class SyslogUDPHandler(socketserver.BaseRequestHandler):
         # MESSAGE FILTER HERE UNDER : SELECT Syslog messages to save into output files thanks to keyword searches
         # ##################################################################################################
         if '%FTD' in syslog:
-            print(cyan('CAPTURED MESSAGE :\n',bold=True))
+            print(red('\nCAPTURED MESSAGE :\n',bold=True))
             print(cyan(syslog,bold=True))
-            with open('./result/ftd_syslogs.txt','a+') as file:
+            with open('../web_server_for_syslogs/result/ftd_syslogs.txt','a+') as file:
                 file.write(syslog+'\n')
         if 'CISE' in syslog:
-            print(cyan('CAPTURED MESSAGE :\n',bold=True))        
+            print(red('\nCAPTURED MESSAGE :\n',bold=True))        
             print(cyan(syslog,bold=True))
-            with open('./result/ise_syslogs.txt','a+') as file:
+            with open('../web_server_for_syslogs/result/ise_syslogs.txt','a+') as file:
                 file.write(syslog+'\n')
+        if 'CISE_Failed_Attempts' in syslog:
+            print(red('\nCAPTURED MESSAGE :\n',bold=True))        
+            print(cyan(syslog,bold=True))
+            with open('../web_server_for_syslogs/result/ise_failed_attempts_syslogs.txt','a+') as file:
+                file.write(syslog+'\n')                
 
                 
 if __name__=="__main__":

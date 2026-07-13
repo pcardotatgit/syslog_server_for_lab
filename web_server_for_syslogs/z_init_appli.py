@@ -5,12 +5,13 @@
 '''
 import glob
 import os
+#from crayons import *
 
 
 def init_appli():
     with open('./venv/Scripts/activate.bat') as file:
         text_content=file.read()
-    text_content=text_content.replace(':END','python syslog_message_generator.py\n:END')
+    text_content=text_content.replace(':END','python web_server_for_syslogs.py\n:END')
     with open('./venv/Scripts/activate.bat','w') as file:
         file.write(text_content)    
     os.remove("a.bat")
@@ -21,7 +22,7 @@ def init_appli():
     with open('a.bat','w') as file:
         file.write('venv\\scripts\\activate')    
     with open('b.bat','w') as file:
-        file.write('python syslog_message_generator.py') 
+        file.write('python web_server_for_syslogs.py') 
     '''
     with open('env.py','w') as file:
         file.write('level="["')    
